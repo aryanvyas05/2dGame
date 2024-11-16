@@ -1,7 +1,7 @@
 package entity;
 
-import java.awt.*;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -16,6 +16,7 @@ public class Player extends Entity{
 	
 	public final int screenX;
 	public final int screenY;
+	int hasKey = 0;
 	
 	public Player(GamePanel gp, KeyHandler keyH) {
 		this.gp = gp;
@@ -25,6 +26,8 @@ public class Player extends Entity{
 		screenY = gp.screenHeight/2 - (gp.tileSize/2);
 		
 		solidArea = new Rectangle(22, 16, 8, 32);
+		solidAreaDefaultX = solidArea.x;
+		solidAreaDefaultY = solidArea.y;
 
 		
 		setDefaultValues();					
@@ -72,6 +75,9 @@ public class Player extends Entity{
 			collisionOn = false;
 			gp.checker.checkTile(this);
 			
+			int objIndex = gp.checker.checkObject(this, true);
+			pickUpObject(objIndex);
+			
 			if(!collisionOn) {
 				switch(direction) {
 				case"up": worldY -= speed; break;
@@ -91,6 +97,25 @@ public class Player extends Entity{
 	            spriteCounter = 0;
 	        }
 	    }
+	}
+	
+	public void pickUpObject(int i) {
+		if(i != 999) {
+			String objectName = gp.obj[i].name;
+			
+			switch(objectName) {
+			case "Key":
+				hasKey++;
+				gp.obj[i] = null;
+				System.out.println("Key: " + hasKey);
+				break;
+			case "Door":
+				if(hasKey > 0);
+				gp.obj[i] = null;
+				hasKey--;
+				break;
+			}
+		}
 	}
     
 	public void draw(Graphics2D g2) {
